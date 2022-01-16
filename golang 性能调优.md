@@ -45,3 +45,13 @@ Golang 官方提供的性能调优工具，可以对程序进行性能分析，�
 
 #### 三、 runtime/pprof
 
+##### 1、开启采集
+
+- 写入文件：pprof.StartCPUProfile(w io.Writer) pprof.StopCPUProfile()
+- 开启测试： go test -cpuprofile cpu.prof -memprofile mem.prof -bench .
+- http server： go tool pprof $host/debug/pprof/profile
+
+##### 2、分析数据
+
+- 命令行交互分析：go tool pprof democpu.pprof
+- 图形可视化：谷歌火焰图
