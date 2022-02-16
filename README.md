@@ -8,7 +8,7 @@
 
 ### [2、redis](./redis.md)
 
-### 3、mysql
+### [3、mysql](./mysql.md)
 
-### 4、docker 和k8s
+### [4、docker 和k8s](./docker和k8s.md)
 
