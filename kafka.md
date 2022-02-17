@@ -1,6 +1,6 @@
 ### kafka
 
-#### 1、原理
+#### 一、原理
 
 - **topic**
   - 生产者push 到topic，消费者从topic 拉数据
@@ -22,3 +22,17 @@
   - 探测broker和consumer的添加或移除
   - 负责维护所有partition的领导者/从属者关系（主分区和备份分区），如果主分区挂了，需要选举出备份分区作为主分区。
   - 维护topic、partition等元配置信息
+
+#### 二、基础
+
+##### 1、获取topic列表
+
+- bin/kafka-topics.sh --list --zookeeper localhost:2181
+
+##### 2、**生产者在主题上发布消息**
+
+- bin/kafka-console-producer.sh --broker-list 192.168.43.49:9092 --topicHello-Kafka
+
+##### 3、**消费者接受消息**
+
+- bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topicHello-Kafka --from-beginning
