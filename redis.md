@@ -152,32 +152,76 @@ Zookeeper 不像 Redis 那样，需要考虑锁的过期时间问题，它是采
   2. 部署和运维成本高
   3. 客户端与 Zookeeper 的长时间失联，锁被释放问题
 
+##### 7、底层数据结构
+
+- SDS - simple synamic string - 支持自动动态扩容的字节数组
+- list - 平平无奇的链表
+- dict - 使用双哈希表实现的, 支持平滑扩容的字典
+- zskiplist - 附加了后向指针的跳跃表
+- intset - 用于存储整数数值集合的自有结构
+- ziplist - 一种实现上类似于TLV, 但比TLV复杂的, 用于存储任意数据的有序序列的数据结构
+- quicklist - 一种以ziplist作为结点的双链表结构, 实现的非常苟
+- zipmap - 一种用于在小规模场合使用的轻量级字典结构
+
+##### 8、内存淘汰算法
+
+Redis 提供 6 种数据淘汰策略：
+
+1. **volatile-lru（least recently used）**：从已设置过期时间的数据集（server.db[i].expires）中挑选最近最少使用的数据淘汰
+2. **volatile-ttl**：从已设置过期时间的数据集（server.db[i].expires）中挑选将要过期的数据淘汰
+3. **volatile-random**：从已设置过期时间的数据集（server.db[i].expires）中任意选择数据淘汰
+4. **allkeys-lru（least recently used）**：当内存不足以容纳新写入数据时，在键空间中，移除最近最少使用的 key（这个是最常用的）
+5. **allkeys-random**：从数据集（server.db[i].dict）中任意选择数据淘汰
+6. **no-eviction**：禁止驱逐数据，也就是说当内存不足以容纳新写入数据时，新写入操作会报错。这个应该没人使用吧！
+
+4.0 版本后增加以下两种：
+
+1. **volatile-lfu（least frequently used）**：从已设置过期时间的数据集（server.db[i].expires）中挑选最不经常使用的数据淘汰
+2. **allkeys-lfu（least frequently used）**：当内存不足以容纳新写入数据时，在键空间中，移除最不经常使用的 key
+
 #### 二、集群策略
 
-#### 1、 主从复制
+##### 一、主从复制
 
-##### 同步原理:
+一主多从
+
+- 同步原理:
 
   主从redis建立连接后，根据runid 及复制偏移量进行同步，首次同步先同步RDB快照，然后根据偏移量同步缓存数据
 
 - 无法水平扩容
 
-#### 2、哨兵
+##### 2、哨兵
+
+监控主从数据库是否正常运行，master出现故障时，自动将它的其中一个slave转化为master。
 
 - 无法水平扩容
 - 自动切换slave 和master
 
-#### 3、集群
+##### 3、集群
 
-#### 1、redis-cluster
+- 1、redis-cluster
 
-- 无中心架构，每个节点都与其他所有节点连接
+  - 无中心架构，每个节点都与其他所有节点连接
 
-#### 2、中间件
+  - redis-cluster把所有的物理节点映射到[0,16383]slot（槽）上，cluster负责维护node--slot--value。
 
-- twemproxy
+    集群预先给所有节点分好16384个桶，每个节点得到部分桶，当需要在redis集群中插入数据时，根据CRC16(KEY) mod 16384的值，决定将一个key放到哪个桶中。
 
-#### 3、 客户端分片
+    为了增加集群的可访问性，官方推荐的方案是将node配置成主从结构，即一个master主节点，挂n个slave从节点。如果主节点失效，redis cluster会根据选举算法从slave节点中选择一个上升为master节点，整个集群继续对外提供服务。
+
+
+- 2、中间件
+  - twemproxy
+  - codis
+
+- 3、 客户端分片
+
+  - 一致性哈希算法
+
+    - 只影响相邻节点key分配，影响量小。
+
+    
 
 
 
