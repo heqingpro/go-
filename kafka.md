@@ -36,3 +36,30 @@
 ##### 3、**消费者接受消息**
 
 - bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topicHello-Kafka --from-beginning
+
+#### 三、存在问题
+
+##### 1、kafka 如何保证不丢消息
+
+- **生产者丢失消息**
+
+  - 调用send方法发送消息之后，网络丢失
+
+    为了确定消息是发送成功，我们要判断消息发送的结果。send之后通过回调重试
+
+- **消费者丢失消息**
+
+  - 当消费者拉取到了分区的某个消息之后，消费者会自动提交了 offset。如果此时消费失败，即丢失消息。
+    - 取消自动提交offset，真正消费完消息之后之后再自己手动提交 offset，但是可能会重复消费
+
+- **kafka弄丢消息**
+
+  - **leader 分区所在的 broker 突然挂掉，那么就要从 follower 副本重新选出一个 leader ，但是 leader 的数据还有一些没有被 follower 副本的同步的话，就会造成消息丢失。**
+
+    - **设置 acks = all**  （所有副本都收到才判断发送成功）
+
+      acks 的默认值即为1，代表我们的消息被leader副本接收之后就算被成功发送。当我们配置 **acks = all** 代表则所有副本都要接收到该消息之后该消息才算真正成功被发送。
+
+    - **设置 replication.factor >= 3** （设置副本数）
+    - **min.insync.replicas > 1**  （这样配置代表消息至少要被写入到 2 个副本才算是被成功发送）
+
