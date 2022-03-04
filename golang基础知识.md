@@ -15,6 +15,7 @@
   - 每个P维护一个G的本地队列
 
 - **M(Machine) 线程**
+
   - GOMAXPROCS控制数量，默认情况跟内核数相同；每个线程分配到一个CPU上就不至于出现线程的上下文切换，可以降低开销
 
 - **调度过程**
@@ -155,3 +156,35 @@
 - **sendx/recvx** 用于记录`buf`这个循环链表中的index
 - **互斥锁**
 - **recvq/sendq **  goroutine抽象队列，是个双向链表
+
+#### 五、gin框架和beego框架
+
+##### 一、mvc
+
+- Beego支持完整的MVC, Gin不支持完整的MVC（需要开发者自己实现MVC）
+
+##### 二、路由&session
+
+- Beego支持正则路由， Gin不支持正则路由
+- Beego支持Session， Gin不支持Session(需要安装另外的包)
+  - 安装session，推荐包：github.com/astaxie/session
+
+##### 适用场景
+
+- beego 在业务方面较gin支持的多
+  - 在业务更加复杂的项目中，适用Beeg
+  - 在需要快速开发的项目中，适用Beego
+  - 在1.0项目中，适用Beego
+
+- **Gin在性能方面较Beego更好**
+  - 当某个接口的性能遭到较大挑战的时候，考虑使用Gin重写接口
+  - 如果项目的规模不大，业务相对简单，使用Gin
+
+##### 1、gin
+
+- 路由（http router 性能优势大）
+  - 基于 Radix 树的路由，小内存占用。没有反射。
+
+##### 2、beego
+
+- 路由：树形结构+递归算法实现路由的注册与匹配
