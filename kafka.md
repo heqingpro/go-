@@ -63,3 +63,5 @@
     - **设置 replication.factor >= 3** （设置副本数）
     - **min.insync.replicas > 1**  （这样配置代表消息至少要被写入到 2 个副本才算是被成功发送）
 
+##### 2、kafka 延迟队列
+

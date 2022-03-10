@@ -1,5 +1,20 @@
 ### docker 和k8s
 
+#### docker
+
+##### dockerfile 编写命令
+
+- From 基础镜像
+- maitainner 维护者信息
+- Run 执行命令
+- ADD 添加文件 copy文件
+- workdir 工作路径
+- volume 目录挂载
+- expose 开放端口
+- Run
+
+
+
 
 
 #### kubectl 常用命令

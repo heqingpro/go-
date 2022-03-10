@@ -21,6 +21,12 @@
 
   **MySQL InnoDB 的 REPEATABLE-READ（可重读）并不保证避免幻读，需要应用使用加锁读来保证。而这个加锁读使用到的机制就是 Next-Key Locks。**
 
+  - 行锁的三种算法：
+    - Record锁
+    - gap（间隙）锁
+      - InnoDB中的间隙锁的唯一目的是防止其他事务插入间隙。**以此防止幻读**
+    - next-key锁（**Gap Lock+Record Lock**）
+
 - 可串行化
 
 ##### 4、日志
